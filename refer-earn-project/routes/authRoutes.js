@@ -8,7 +8,7 @@ function generateReferralCode() {
   return Math.random().toString(36).substring(2, 8).toUpperCase();
 }
 
-// POST /register
+
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -26,32 +26,29 @@ router.post("/register", async (req, res) => {
       email,
       password,
       referralCode,
-      coins: 0
+      coins: 0,
     });
 
     await newUser.save();
     res.json({ message: "User registered", user: newUser });
 
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server error", error });
   }
 });
 
-module.exports = router;
-
-
-// POST /apply-referral
 router.post("/apply-referral", async (req, res) => {
   try {
     const { userId, referralCode } = req.body;
 
-    // Find the user who is applying the code
+    // Find user applying the code
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if they are trying to use their own referral code
+    // Cannot use own referral code
     if (user.referralCode === referralCode) {
       return res.status(400).json({ message: "You cannot use your own referral code!" });
     }
@@ -73,10 +70,14 @@ router.post("/apply-referral", async (req, res) => {
     res.json({
       message: "Referral applied successfully!",
       coinsAdded: reward,
-      newCoins: user.coins
+      newCoins: user.coins,
     });
 
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server error", error });
   }
 });
+
+// Export router at the END
+module.exports = router;
