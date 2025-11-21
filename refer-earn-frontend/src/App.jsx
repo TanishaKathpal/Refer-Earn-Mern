@@ -7,11 +7,11 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6 relative overflow-hidden">
 
-      {/*  Soft background blobs */}
+      {/* Background Blobs */}
       <div className="absolute top-10 left-10 w-72 h-72 bg-purple-300/20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-10 right-10 w-80 h-80 bg-pink-300/20 rounded-full blur-3xl"></div>
 
-      {/* Outer soft background box */}
+      {/* Main Soft Card */}
       <div className="w-full max-w-2xl bg-white/70 backdrop-blur-sm rounded-2xl p-10 border border-gray-200 shadow-sm relative">
         {screen === "home" && (
           <Home
@@ -29,16 +29,12 @@ export default function App() {
         )}
 
         {screen === "referral" && (
-          <Referral
-            onBack={() => setScreen("home")}
-            knownUser={userData}
-          />
+          <Referral onBack={() => setScreen("home")} knownUser={userData} />
         )}
       </div>
     </div>
   );
 }
-
 
 function Card({ children }) {
   return (
@@ -47,7 +43,6 @@ function Card({ children }) {
     </div>
   );
 }
-
 
 function Home({ onCreate, onReferral, userData }) {
   return (
@@ -89,7 +84,6 @@ function Home({ onCreate, onReferral, userData }) {
   );
 }
 
-
 function Register({ onBack, saveUser }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -101,11 +95,14 @@ function Register({ onBack, saveUser }) {
     setErr(null);
 
     try {
-      const res = await fetch("http://localhost:5000/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
-      });
+      const res = await fetch(
+        "https://refer-earn-mern.onrender.com/api/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) return setErr(data.message);
@@ -160,16 +157,15 @@ function Register({ onBack, saveUser }) {
         {err && <p className="text-red-600 text-base">{err}</p>}
 
         {result && (
-  <div className="text-green-700 text-base mt-3 space-y-2">
-    <p>User ID: <b>{result._id}</b></p>
-    <p>Referral Code: <b>{result.referralCode}</b></p>
-  </div>
-)}
+          <div className="text-green-700 text-base mt-3 space-y-2">
+            <p>User ID: <b>{result._id}</b></p>
+            <p>Referral Code: <b>{result.referralCode}</b></p>
+          </div>
+        )}
       </div>
     </Card>
   );
 }
-
 
 function Referral({ onBack, knownUser }) {
   const [userId, setUserId] = useState("");
@@ -183,11 +179,14 @@ function Referral({ onBack, knownUser }) {
     setErr(null);
 
     try {
-      const res = await fetch("http://localhost:5000/api/apply-referral", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, referralCode }),
-      });
+      const res = await fetch(
+        "https://refer-earn-mern.onrender.com/api/apply-referral",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId, referralCode }),
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) return setErr(data.message);
